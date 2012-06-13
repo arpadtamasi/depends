@@ -1,4 +1,25 @@
+###
+Another dependency loader
+A dependency can be:
+
+	- The url of a script
+
+	- An array of dependencies
+	
+	- A dependency object with the following attributes
+	
+		- url: the url of a script
+	
+		- depends: any kind of dependency (url, array or a dependency object)
+	
+		- unless: a function that returns false if the url has to be loaded
+###
+
 this.depends = (dependency, onload) ->
+	###
+	Loads a script or a dependency tree then calls onload
+	###
+
 	observe = (script, callback) ->
 		loaded = () -> 
 			this.onload = this.onreadystatechange = null
