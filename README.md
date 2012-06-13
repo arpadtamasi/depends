@@ -21,7 +21,6 @@ Example
 
 
 deps = 
-
     jQuery:
         url: "..."
         unless: -> jQuery?
@@ -34,4 +33,4 @@ deps =
         url: "..."
         depends: [deps.jQuery, deps.jQueryUI]
 
-dependa(deps, -> alert 'loaded'
+dependa(deps, -> alert 'loaded')
