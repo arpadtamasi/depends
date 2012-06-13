@@ -20,7 +20,9 @@ A dependency can be:
 Example
 
 
+
 deps = 
+
     jQuery:
         url: "..."
         unless: -> jQuery?
