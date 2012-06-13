@@ -14,7 +14,6 @@ this.depends = (dependency, onload) ->
 	# Loads a script from the given url then invoke callback
 	loadscript = (url, callback) ->
 		script = document.createElement('script')
-		script.type = 'text/javascript'
 		observe(script, callback)
 		script.src = url
 		document.getElementsByTagName("head")[0].appendChild(script)
