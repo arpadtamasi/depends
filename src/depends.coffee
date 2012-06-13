@@ -1,37 +1,17 @@
-###
-Another dependency loader
-A dependency can be:
-
-	- The url of a script
-
-	- An array of dependencies
-	
-	- A dependency object with the following attributes
-	
-		- url: the url of a script
-	
-		- depends: any kind of dependency (url, array or a dependency object)
-	
-		- unless: a function that returns false if the url has to be loaded
-###
-
+# Loads dependencies
 this.depends = (dependency, onload) ->
-	###
-	Loads a script or a dependency tree then calls onload
-	###
-
+	# Observe script loading and invoke callback when ready
 	observe = (script, callback) ->
 		loaded = () -> 
 			this.onload = this.onreadystatechange = null
-			callback() if typeof callback == 'function'	
+			callback && callback()
 
 		if script.readyState
 			script.onreadystatechange = () -> loaded() if this.readyState is 'loaded' or this.readyState is 'complete'
 		else
 			script.onload = () -> loaded()
 
-	name = (url) -> url.replace(/.+\/|\.min\.js|\.js|\?.+|\W/gi, '')
-
+	# Loads a script from the given url then invoke callback
 	loadscript = (url, callback) ->
 		script = document.createElement('script')
 		script.type = 'text/javascript'
@@ -40,6 +20,7 @@ this.depends = (dependency, onload) ->
 		document.getElementsByTagName("head")[0].appendChild(script)
 		script
 
+	# Loads an array of dependencies. Async iteration, invoke callback after the last one.
 	loadarray = (array, i, callback) ->
 		if i < array.length - 1
 			loadtree(array[i], () ->
@@ -48,27 +29,33 @@ this.depends = (dependency, onload) ->
 		else
 			loadtree(array[i], callback)
 
+	# Loads a dependency tree
 	loadtree = (tree, callback) ->
-		if tree instanceof Array
+		# By loadscript if it is a leaf
+		if typeof tree == 'string'
+			id = tree.replace(/.+\/|\.min\.js|\.js|\?.+|\W/gi, '')
+			scripts[id] = loadscript(tree, callback) if !scripts[id]?
+				
+		# By loadarray if it is an array
+		else if tree instanceof Array
 			loadarray(tree, 0, callback)
-		else if typeof tree == 'string'
-			id = name(tree)
-			if !scripts[id]?
-				scripts[id] = loadscript(tree, callback)
+
+		# Otherwise it must be a dependency object
 		else if tree.url?
-			loadurl = () ->
-				loadtree(tree.url, () ->
-					callback() if typeof callback == 'function'
-				)
+			# Load the url
+			loadurl = () ->	loadtree(tree.url, () ->
+				callback && callback()
+			)
+
+			# Test unless if given
 			if !tree.unless? || (typeof tree.unless == 'function' && !tree.unless())
-				if !tree.depends?
-					loadurl()					
-				else
-					loadtree(tree.depends, loadurl)
-			else
-				callback() if typeof callback == 'function'
+				if !tree.depends? then loadurl() else loadtree(tree.depends, loadurl)
+			# If true then just invoke callback
+			else callback && callback()
 
 	scripts = {}
-	loadtree(dependency, onload)
+
+	# Start tree loading
+	loadtree(dependency, onload if typeof onload == 'function')
 	return
 
