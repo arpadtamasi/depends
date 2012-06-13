@@ -21,19 +21,23 @@ Example
 
 
 
-deps = 
+    deps = {}
 
-    jQuery:
-        url: "..."
+    deps.jQuery = 
+        url: "https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"
         unless: -> jQuery?
 
-    jQueryUI:
-        url: "..."
+    deps.jQueryUI = 
+        url: "https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.18/jquery-ui.min.js"
         depends: deps.jQuery
 
-    app:
-        url: "..."
-        depends: [deps.jQuery, deps.jQueryUI]
+    deps.autoNumeric =
+      url: "js/lib/autoNumeric.js"
+      depends: deps.jQuery
+      unless: -> window.formatNumber?
 
-depends
-(deps, -> alert 'loaded')
+    deps.app = 
+        url: "js/lib/konfigurator.js"
+        depends: [deps.jQuery, deps.jQueryUI, deps.autoNumeric]
+
+    depends(deps.app, () -> alert 'loaded')
