@@ -35,4 +35,5 @@ deps =
         url: "..."
         depends: [deps.jQuery, deps.jQueryUI]
 
-dependa(deps, -> alert 'loaded')
+depends
+(deps, -> alert 'loaded')
