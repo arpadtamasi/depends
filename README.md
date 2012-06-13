@@ -19,6 +19,7 @@ A dependency can be:
 
 Example
 
+
 deps = 
 
     jQuery:
