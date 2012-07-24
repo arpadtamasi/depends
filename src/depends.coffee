@@ -1,5 +1,5 @@
 # Loads dependencies
-@depends = (dependency, onload) ->
+depends = (dependency, onload) ->
 	# Loads an array of dependencies. Async iteration, invoke callback after the last one.
 	loadarray = (array, i, callback) -> if i >= array.length - 1 then loadtree(array[i], callback) else loadtree(array[i], -> loadarray(array, i+1, callback))
 			
